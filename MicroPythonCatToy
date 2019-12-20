@@ -1,0 +1,37 @@
+## A simple cat toy using a laser module and mini tower servo
+## Connect the - pin of the laser to ground and the + to 3.3 volts
+## Connect the brown (or dark) wire of the servo to ground, the orange to pin d4, and red to 3.3v
+
+## Import modules
+import machine
+from time import sleep
+import random
+import math
+import utime
+
+## Set up the servo pin connected to D4
+servo = machine.PWM(machine.Pin(2), freq=50)
+
+## Create a sweeping animation
+def Sweep():
+    for i in range(0,120):
+        servo.duty(i)
+        utime.sleep_ms(100)
+    for i in range(120, 0, -1):
+        servo.duty(i)
+        utime.sleep_ms(100)
+
+## Create a random function
+def randint(lower, upper):
+    gap = upper - lower
+    if gap == 0:
+        return lower
+    return (random.getrandbits(int(math.log(gap, 2)))% gap) + lower
+
+## Main loop goes 20-50 times before doing a full sweep back and forth
+while True:
+    x = randint(20, 50)
+    for i in range(20,randint(20, 50)):
+        servo.duty(randint(0, 120))
+        utime.sleep_ms(randint(500, 2000))
+        if i == x-1: Sweep()
